@@ -4,6 +4,8 @@
 
 This repository contains various GitHub Action workflows to trigger Matrix builds on self-hosted GitHub Action runners and visualize their outputs and pod allocations on LED matrices connected to Raspberry PI. Similar visualization scripts are also available for desktop PCs.
 
+https://user-images.githubusercontent.com/1872314/109437801-218af480-7a27-11eb-8968-acf12d6392a5.mp4
+
 ![image](https://user-images.githubusercontent.com/1872314/109425278-cbe32780-79e7-11eb-96b0-bd8be7b70896.png)
 
 ![image](https://user-images.githubusercontent.com/1872314/109425509-d8b44b00-79e8-11eb-9494-c860ee4d00b1.png)
