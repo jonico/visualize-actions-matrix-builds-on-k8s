@@ -26,6 +26,7 @@ class PodStatusLed():
         self.parser.add_argument("--window-x",  help="window size x", default=800, type=int)
         self.parser.add_argument("--window-y",  help="window size y", default=600, type=int)
         self.parser.add_argument("nodes", action='store', nargs='+', default=["node64-1", "node64-2"])
+        self.parser.add_argument("--dashboard-url", help="Kubernetes dashboard URL", default="http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/", type=str)
 
         self.args = self.parser.parse_args()
 
@@ -65,7 +66,7 @@ class PodStatusLed():
         nodesByPosition = {}
         positionsAlreadyTaken = {}
         objectAtPosition = {}
-        fullScreen = False
+        fullScreen = True
 
         numberNodes=len(self.args.nodes)
         pixelsPerNodeRow = int(self.args.max_x/numberNodes)
@@ -76,6 +77,7 @@ class PodStatusLed():
         podPixelHeight=self.args.height
 
         namespace = self.args.namespace
+        dashboardUrl = self.args.dashboard_url
 
         podsPerColumn = int(pixelsPerNodeColumn/podPixelHeight)
 
@@ -117,7 +119,7 @@ class PodStatusLed():
 
         #window = sg.Window('Pod Status', font='Any 9', border_depth=2, no_titlebar=True, size=(800,600)).Layout(layout).Finalize()
         # window = sg.Window('Pod Status', font='Any 7', border_depth=2, size=(self.args.window_x,self.args.window_y)).Layout(layout).Finalize()
-        window = sg.Window('Pod Status', font='Any 7', border_depth=3).Layout(layout).Finalize()
+        window = sg.Window('Pod Status', font='Any 7', margins=(0,0), border_depth=3).Layout(layout).Finalize()
         window.Maximize()
 
         activeLayout=0
@@ -133,7 +135,10 @@ class PodStatusLed():
                 # We may introduce more pod related ops later
                 if object not in self.args.nodes:
                     # print (subprocess.getoutput(("kubectl delete pod '%s' --namespace '%s'") % (object, namespace)))
-                    subprocess.Popen(["kubectl", "delete", "pods", object, "--namespace", namespace])
+                    # subprocess.Popen(["kubectl", "delete", "pods", object, "--namespace", namespace])
+                    url = "%s/#/pod/%s/%s/?namespace=%s" % (dashboardUrl, namespace, object, namespace)
+                    print (url)
+                    subprocess.Popen(["open", url ])
                 else:
                     # node related or general op
 
@@ -174,7 +179,7 @@ class PodStatusLed():
                 for j in range (podsPerColumn):
                     for i in range(podsPerNodeRow):
                         window[((activeLayout+1)%2, i + offsetX, j)].update(PodStatusLed.splitCamelCase(" "), button_color=('black', 'grey'), disabled=False)
-                        window[((activeLayout+1)%2, i + offsetX, j)].SetTooltip("Click for possible operations")
+                        window[((activeLayout+1)%2, i + offsetX, j)].SetTooltip("Click for possible node operations")
                         objectAtPosition[((activeLayout+1)%2, i + offsetX, j)]=node
                 offsetX += podsPerNodeRow
 
@@ -260,7 +265,7 @@ class PodStatusLed():
                     color = PodStatusLed.status_color(pod.status)
                     window[((activeLayout+1)%2, basePosX + offsetX, basePosY)].update(PodStatusLed.splitCamelCase(pod.status), button_color=(textColor, color), disabled=False)
                     if (pod.status != 'Terminated'):
-                        window[((activeLayout+1)%2, basePosX + offsetX, basePosY)].SetTooltip("Click to kill pod %s" % pod.shortName)
+                        window[((activeLayout+1)%2, basePosX + offsetX, basePosY)].SetTooltip("Click to get dashboard for pod %s" % pod.shortName)
                         objectAtPosition[((activeLayout+1)%2, basePosX + offsetX, basePosY)]=pod.shortName
                     i+=1
                 offsetX += podsPerNodeRow
