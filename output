@@ -1,0 +1,35 @@
+[Visualize matrix build/Reset LEDs    ] 🚀  Start image=jonico/actions-runner:latest
+[Visualize matrix build/Reset LEDs    ]   🐳  docker run image=jonico/actions-runner:latest entrypoint=["/usr/bin/tail" "-f" "/dev/null"] cmd=[]
+[Visualize matrix build/Reset LEDs    ]   🐳  docker cp src=/home/codespace/workspace/raspberry-pi-kubernetes-workflows/. dst=/github/workspace
+[Visualize matrix build/Reset LEDs    ] ⭐  Run checkout
+[Visualize matrix build/Reset LEDs    ]   ✅  Success - checkout
+[Visualize matrix build/Reset LEDs    ] ⭐  Run Reset image
+[Visualize matrix build/Reset LEDs    ]   | Traceback (most recent call last):
+
+[Visualize matrix build/Reset LEDs    ]   |   File "publish-pixels.py", line 72, in <module>
+
+[Visualize matrix build/Reset LEDs    ]   |     stream_pixels.run()
+
+[Visualize matrix build/Reset LEDs    ]   |   File "publish-pixels.py", line 52, in run
+
+[Visualize matrix build/Reset LEDs    ]   |     redisClient.delete(environment)
+
+[Visualize matrix build/Reset LEDs    ]   |   File "/usr/lib/python3/dist-packages/redis/client.py", line 937, in delete
+
+[Visualize matrix build/Reset LEDs    ]   |     return self.execute_command('DEL', names)
+
+[Visualize matrix build/Reset LEDs    ]   |   File "/usr/lib/python3/dist-packages/redis/client.py", line 668, in execute_command
+
+[Visualize matrix build/Reset LEDs    ]   |     return self.parse_response(connection, command_name, options)
+
+[Visualize matrix build/Reset LEDs    ]   |   File "/usr/lib/python3/dist-packages/redis/client.py", line 680, in parse_response
+
+[Visualize matrix build/Reset LEDs    ]   |     response = connection.read_response()
+
+[Visualize matrix build/Reset LEDs    ]   |   File "/usr/lib/python3/dist-packages/redis/connection.py", line 629, in read_response
+
+[Visualize matrix build/Reset LEDs    ]   |     raise response
+
+[Visualize matrix build/Reset LEDs    ]   | redis.exceptions.ResponseError: NOAUTH Authentication required
+
+[Visualize matrix build/Reset LEDs    ]   ❌  Failure - Reset image

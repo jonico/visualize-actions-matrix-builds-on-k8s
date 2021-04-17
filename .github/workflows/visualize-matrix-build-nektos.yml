@@ -1,4 +1,4 @@
-name: Visualize matrix build Nektos
+name: Visualize matrix build
 
 on:
   workflow_dispatch:
@@ -15,14 +15,6 @@ on:
         description: 'Number of job duration in ms'
         required: true
         default: '1000'
-      x:
-        description: 'Number of jobs on x-Axis'
-        required: true
-        default: '8'
-      y:
-        description: 'Number of jobs on y-Axis'
-        required: true
-        default: '6'
       environment:
         description: 'environment'
         required: true
@@ -31,10 +23,9 @@ on:
         description: 'REDIS HOST'
         required: true
         default: '35.245.139.140'
-
 jobs:
   reset-led:
-    name: "Reset Matrix"
+    name: "Reset LEDs"
     runs-on: ${{ github.event.inputs.environment }}
     steps:
       - name: checkout
@@ -55,10 +46,10 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: 50
+      max-parallel: 32
       matrix:
-          x: ${{ fromJson(needs.generate-matrix.outputs.x) }}
-          y: ${{ fromJson(needs.generate-matrix.outputs.y) }}
+          x: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+          y: [1,2,3,4,5,6,7,8,9,10,11,12]
 
     steps:
       - name: checkout
