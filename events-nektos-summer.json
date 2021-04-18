@@ -1,0 +1,12 @@
+{  
+  "inputs": {
+    "cluster": "gcp",
+    "environment": "foobar",
+    "image_url": "summer-finished.png",
+    "reset_image_url" : "summer-start.png",
+    "x": "16",
+    "y": "12",
+    "duration": "1000",
+    "redis_host": "35.245.139.140"
+  }
+}
