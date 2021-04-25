@@ -18,7 +18,7 @@ class PodStatusLed():
         self.parser = argparse.ArgumentParser()
         self.parser.add_argument("--max-y", help="max y pixels", default=blinkt.NUM_PIXELS, type=int)
         self.parser.add_argument("-n", "--namespace", help="Kubernetes namespace", default="github-actions-runner-link")
-        self.parser.add_argument("nodes", action='store', nargs='+', default=["node64-2"])
+        self.parser.add_argument("nodes", action='store', nargs='?', default=["node64-2"])
 
         self.args = self.parser.parse_args()
 
@@ -89,7 +89,6 @@ class PodStatusLed():
                 podName = podShortName + "-" + nodeName
 
                 if (nodeName not in nodes.keys()):
-                    print ("Node %s not displayed on display, ignoring pod %s" % (nodeName, podName))
                     continue
 
                 podsSeenThisRound.add(podName)
