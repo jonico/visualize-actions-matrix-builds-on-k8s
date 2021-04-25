@@ -2,6 +2,7 @@
 import time
 import argparse
 import blinkt
+import subprocess
 
 class Pod:
      def __init__(self, name, status, node, position, shortName):
