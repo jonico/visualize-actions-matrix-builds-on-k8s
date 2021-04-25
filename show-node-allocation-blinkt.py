@@ -18,7 +18,7 @@ class PodStatusLed():
         self.parser = argparse.ArgumentParser()
         self.parser.add_argument("--max-y", help="max y pixels", default=blinkt.NUM_PIXELS, type=int)
         self.parser.add_argument("-n", "--namespace", help="Kubernetes namespace", default="github-actions-runner-link")
-        self.parser.add_argument("nodes", action='store', nargs='?', default=["node64-2"])
+        self.parser.add_argument("nodes", action='store', nargs='+', default=["node64-2"])
 
         self.args = self.parser.parse_args()
 
@@ -138,6 +138,7 @@ class PodStatusLed():
                     if (not pod.name in podsSeenThisRound):
                         pod.status="Terminated"
                     r,g,b = PodStatusLed.status_color(pod.status)
+                    print("Setting %d %d %d %d" % (i, r, g, b))
                     blinkt.set_pixel(i, r, g, b)
                     i+=1
                 offsetX += 1
