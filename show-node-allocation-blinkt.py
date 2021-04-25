@@ -138,7 +138,7 @@ class PodStatusLed():
                     if (not pod.name in podsSeenThisRound):
                         pod.status="Terminated"
                     r,g,b = PodStatusLed.status_color(pod.status)
-                    print("Setting %d %d %d %d" % (i, r, g, b))
+                    # print("Setting %d %d %d %d" % (i, r, g, b))
                     blinkt.set_pixel(i, r, g, b)
                     i+=1
                 offsetX += 1
