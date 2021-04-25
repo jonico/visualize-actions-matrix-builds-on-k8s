@@ -141,7 +141,7 @@ class PodStatusLed():
                     r,g,b = PodStatusLed.status_color(pod.status)
                     blinkt.set_pixel(i, r, g, b)
                     i+=1
-                offsetX += podsPerNodeRow
+                offsetX += 1
 
             blinkt.show()
             time.sleep(1)
