@@ -60,5 +60,6 @@ jobs:
           REDIS_PASSWORD: ${{secrets.REDIS_PASSWORD}}
           REDIS_HOST: ${{ github.event.inputs.redis_host }}
         run: |
+          sleep $((RANDOM%5+5))
           python3 visualize-matrix-build.py --max-x=800 --max-y=600 --job-x='${{matrix.x}}' --job-y='${{matrix.y}}' --max-job-x='${{github.event.inputs.x}}' --max-job-y='${{github.event.inputs.y}}' --duration='${{github.event.inputs.duration}}' --environment='${{github.event.inputs.environment}}' --image-file='${{ github.event.inputs.image_url }}' --redis-host="$REDIS_HOST"
         working-directory: ./images

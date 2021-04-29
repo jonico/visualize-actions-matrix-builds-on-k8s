@@ -18,7 +18,7 @@
     "reset_image_url" : "matrix-start.png",
     "x": "16",
     "y": "12",
-    "duration": "1000",
+    "duration": "5000",
     "redis_host": "35.245.139.140"
   },
   "organization": {
