@@ -35,6 +35,7 @@ jobs:
 
   matrix:
     name: "Matrix job"
+    if: "false"
     runs-on: ${{ github.event.inputs.environment }}
     needs: [reset-led]
 

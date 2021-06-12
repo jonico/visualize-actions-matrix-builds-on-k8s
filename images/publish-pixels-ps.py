@@ -55,8 +55,12 @@ class StreamPixels(object):
         cursor.execute(clear_environment, environment)
         connection.commit()
 
-        values = ""
+        add_pixels = ("INSERT INTO matrix "
+               "(job, lines ) "
+               "VALUES (%s, %s)")
+        
         for x in range(maxX):
+            values = ""
             for y in range(maxY):
 
                 r, g, b = rgb_im.getpixel((x%width, y%height))
@@ -65,12 +69,11 @@ class StreamPixels(object):
                 values+="\n"
                 # print("Setting key %s with value %s" % (key, value))
                 # p.set(key,value)
+            
+            cursor.execute(add_pixels, ("reset", values))
         # p.execute()
         #redisClient.hset(environment,"reset",values)
-        add_image = ("INSERT INTO matrix "
-               "(job, lines ) "
-               "VALUES (%s, %s)")
-        cursor.execute(add_image, ("reset", values))
+        
         connection.commit()
         #time.sleep(sleepInterval/1000)
 

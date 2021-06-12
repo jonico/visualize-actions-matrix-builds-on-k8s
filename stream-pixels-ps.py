@@ -112,8 +112,8 @@ class StreamPixels():
 
                 # if job.startswith("reset"):
                 # delete everything on redis that has been read, like a message bus
-                clear_environment = ("delete from matrix where environment = %s")
-                cursor2.execute(clear_environment, environment)
+                clear_environment = ("delete from matrix where environment = %s and job= %s")
+                cursor2.execute(clear_environment, (environment, job))
                 #redisClient.hdel(environment, job)
 
             connection.commit()
