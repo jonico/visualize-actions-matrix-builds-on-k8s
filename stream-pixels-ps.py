@@ -35,12 +35,12 @@ class StreamPixels():
 
         pixelCache = {}
 
-        #print (os.environ.get('DATABASE_URL'))
+        print (os.environ.get('DATABASE_URL'))
 
         url = urlparse(os.environ.get('DATABASE_URL'))
         #print (url.username, url.password, url.hostname, url.port, url.path[1:])
 
-        connection = pymysql.connect(user=url.username,password=url.password, host=url.hostname,port=url.port)
+        connection = pymysql.connect(user=url.username,password=url.password, host=url.hostname,port=url.port, database=url.path[1:])
         cursor = connection.cursor()
         cursor2 = connection.cursor()
 
@@ -95,7 +95,7 @@ class StreamPixels():
                     window.Maximize()
                     fullScreen = True
 
-            line_query = ("select job, line from matrix where environment = %s")
+            line_query = ("select job, lines from matrix where environment = %s")
             cursor.execute(line_query, (environment))
             #for job, lines in redisClient.hgetall(environment).items():
             for (job, lines) in cursor:
