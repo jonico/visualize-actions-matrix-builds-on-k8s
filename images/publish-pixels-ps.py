@@ -17,7 +17,7 @@ class StreamPixels(object):
         self.parser.add_argument("--job-x", help="job x", default=0, type=int)
         self.parser.add_argument("--max-y", help="max y pixel", default=16, type=int)
         self.parser.add_argument("--job-y", help="job y", default=0, type=int)
-        self.parser.add_argument("--environment", help="environment", default="foobar", type=str)
+        self.parser.add_argument("--environment", help="environment", default="barfoo", type=str)
         self.parser.add_argument("--image-file", help="image file location", default="images/static_image.jpg", type=str)
         self.parser.add_argument("--sleep-interval", help="sleep interval in milliseconds", default="0", type=int)
         self.args = self.parser.parse_args()
@@ -56,8 +56,8 @@ class StreamPixels(object):
         connection.commit()
 
         add_pixels = ("INSERT INTO matrix "
-               "(job, lines ) "
-               "VALUES (%s, %s)")
+               "(environment, job, lines ) "
+               "VALUES (%s, %s, %s)")
         
         for x in range(maxX):
             values = ""
@@ -70,7 +70,7 @@ class StreamPixels(object):
                 # print("Setting key %s with value %s" % (key, value))
                 # p.set(key,value)
             
-            cursor.execute(add_pixels, ("reset", values))
+            cursor.execute(add_pixels, (environment, ("line%d") % (x), values))
         # p.execute()
         #redisClient.hset(environment,"reset",values)
         
