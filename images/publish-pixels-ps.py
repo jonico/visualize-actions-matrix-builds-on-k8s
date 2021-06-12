@@ -62,7 +62,6 @@ class StreamPixels(object):
         for x in range(maxX):
             values = ""
             for y in range(maxY):
-
                 r, g, b = rgb_im.getpixel((x%width, y%height))
                 value=("%d,%d,%d,%d,%d")%(x+offsetX,y + offsetY,r,g,b)
                 values+=value
@@ -71,6 +70,7 @@ class StreamPixels(object):
                 # p.set(key,value)
             
             cursor.execute(add_pixels, (environment, ("line%d") % (x), values))
+            #connection.commit()
         # p.execute()
         #redisClient.hset(environment,"reset",values)
         
