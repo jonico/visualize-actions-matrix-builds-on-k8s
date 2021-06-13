@@ -6,11 +6,11 @@ on:
       image_url:
         description: Image URL
         required: true
-        default: matrix-finished.png
+        default: summer-finished.png
       reset_image_url:
         description: Reset Image URL
         required: true
-        default: matrix-start.png
+        default: summer-start.png
       duration:
         description: 'Number of job duration in ms'
         required: true
@@ -23,6 +23,18 @@ on:
         description: 'DB name'
         required: true
         default: 'monalisa'
+      x:
+        description: 'Number of jobs on x-Axis'
+        required: true
+        default: '16'
+      y:
+        description: 'Number of jobs on y-Axis'
+        required: true
+        default: '12'
+      environment:
+        description: 'environment'
+        required: true
+        default: 'foobar'
       
 
 jobs:
@@ -39,19 +51,33 @@ jobs:
           PLANETSCALE_SERVICE_TOKEN: ${{secrets.PLANETSCALE_SERVICE_TOKEN}}
           PLANETSCALE_ORG: "jonico"
         run: |
-          pscale connect ${{ github.event.inputs.db_name }} ${{ github.event.inputs.db_branch }} --execute "python3 publish-pixels-ps.py --max-x=800 --max-y=600 --job-x=0 --job-y=0 --image-file='${{ github.event.inputs.reset_image_url }}'  --environment=barfoo"
+          pscale connect ${{ github.event.inputs.db_name }} ${{ github.event.inputs.db_branch }} --execute "python3 publish-pixels-ps.py --max-x=800 --max-y=600 --job-x=0 --job-y=0 --image-file='${{ github.event.inputs.reset_image_url }}'  --environment='${{ github.event.inputs.environment }}'"
         working-directory: ./images
+  
+  generate-matrix:
+    name: "Generate matrix job specs"
+    outputs:
+      x: ${{ steps.generate-matrix.outputs.x }}
+      y: ${{ steps.generate-matrix.outputs.y }}
+    runs-on: ${{ github.event.inputs.environment }}
+    steps:
+      - name: generate-matrix
+        id: generate-matrix
+        run: |
+          echo "::set-output name=x::[`seq -s , ${{ github.event.inputs.x }}`]"
+          echo "::set-output name=y::[`seq -s , ${{ github.event.inputs.y }}`]"
 
   enter-matrix:
     name: "Matrix job"
     runs-on: ${{ github.event.inputs.environment }}
-    needs: [reset-matrix]
+    needs: [reset-matrix, generate-matrix]
 
     strategy:
       fail-fast: false
+      #max-parallel: 16
       matrix:
-          x: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
-          y: [1,2,3,4,5,6,7,8,9,10,11,12]
+        x: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+        y: [1,2,3,4,5,6,7,8,9,10,11,12]
 
     steps:
       - name: checkout
@@ -64,5 +90,5 @@ jobs:
           PLANETSCALE_ORG: "jonico"
         run: |
           sleep $((RANDOM%5+5))
-          pscale connect ${{ github.event.inputs.db_name }} ${{ github.event.inputs.db_branch }} --execute "python3 visualize-matrix-build-ps.py --max-x=800 --max-y=600 --job-x='${{matrix.x}}' --job-y='${{matrix.y}}' --max-job-x='${{github.event.inputs.x}}' --max-job-y='${{github.event.inputs.y}}' --duration='${{github.event.inputs.duration}}' --environment=barfoo --image-file='${{ github.event.inputs.image_url }}'"
+          pscale connect ${{ github.event.inputs.db_name }} ${{ github.event.inputs.db_branch }} --execute "python3 visualize-matrix-build-ps.py --max-x=800 --max-y=600 --job-x='${{matrix.x}}' --job-y='${{matrix.y}}' --max-job-x='${{github.event.inputs.x}}' --max-job-y='${{github.event.inputs.y}}' --duration='${{github.event.inputs.duration}}' --environment='${{ github.event.inputs.environment }}' --image-file='${{ github.event.inputs.image_url }}'"
         working-directory: ./images

@@ -74,12 +74,12 @@ class VisualizeMatrixBuild(object):
                 value=("%d,%d,%d,%d,%d")%(realX,realY,r,g,b)
                 values+=value
                 values+="\n"
-
-            # if there are more than 100 pixels, line by line updates will put too much stress on PS, updating the entire cell then    
-            if (maxX < 100 and maxY < 100):
-                    hashKey = ("job/%d/%d/%d") % (self.args.job_x, self.args.job_y, y)
-                    cursor.execute(add_pixels, (environment, hashKey, values))
-                    values=""
+            #if (y != 0 and y%8 == 0):
+            #    hashKey = ("%d/%d/%d") % (self.args.job_x, self.args.job_y, y)
+            #   cursor.execute(add_pixels, (environment, hashKey, values))
+            #    connection.commit()
+            #    values=""
+        
             time.sleep(sleepBetweenPixels*pixelsX/1000)
         hashKey = ("job/%d/%d") % (self.args.job_x, self.args.job_y)
         cursor.execute(add_pixels, (environment, hashKey, values))
