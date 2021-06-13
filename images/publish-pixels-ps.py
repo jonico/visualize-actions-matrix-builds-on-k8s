@@ -73,13 +73,12 @@ class StreamPixels(object):
                 values+=value
                 values+="\n"
             records_to_insert.append((environment, ("line%d") % (x), values))
-            if (x%2 == 0):
+            if (x != 0 and x%2 == 0):
                 cursor.executemany(add_pixels, records_to_insert)
-                connection.commit()
                 records_to_insert = []
             # redisClient.hset(environment,("line%d") % (x), values)    
         
-        
+        connection.commit()
         # Redis could also write all data in one call but MySQL's text column would be too small to do this
         #redisClient.hset(environment,"reset",values)
 
