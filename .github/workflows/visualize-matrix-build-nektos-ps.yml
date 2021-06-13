@@ -19,6 +19,10 @@ on:
         description: 'DB branch'
         required: true
         default: 'main'
+      db_name:
+        description: 'DB name'
+        required: true
+        default: 'monalisa'
       
 
 jobs:
@@ -35,7 +39,7 @@ jobs:
           PLANETSCALE_SERVICE_TOKEN: ${{secrets.PLANETSCALE_SERVICE_TOKEN}}
           PLANETSCALE_ORG: "jonico"
         run: |
-          pscale connect octodemo ${{ github.event.inputs.db_branch }} --execute "python3 publish-pixels-ps.py --max-x=800 --max-y=600 --job-x=0 --job-y=0 --image-file='${{ github.event.inputs.reset_image_url }}'  --environment=barfoo"
+          pscale connect ${{ github.event.inputs.db_name }} ${{ github.event.inputs.db_branch }} --execute "python3 publish-pixels-ps.py --max-x=800 --max-y=600 --job-x=0 --job-y=0 --image-file='${{ github.event.inputs.reset_image_url }}'  --environment=barfoo"
         working-directory: ./images
 
   enter-matrix:
@@ -60,5 +64,5 @@ jobs:
           PLANETSCALE_ORG: "jonico"
         run: |
           sleep $((RANDOM%5+5))
-          pscale connect octodemo ${{ github.event.inputs.db_branch }} --execute "python3 visualize-matrix-build-ps.py --max-x=800 --max-y=600 --job-x='${{matrix.x}}' --job-y='${{matrix.y}}' --max-job-x='${{github.event.inputs.x}}' --max-job-y='${{github.event.inputs.y}}' --duration='${{github.event.inputs.duration}}' --environment=barfoo --image-file='${{ github.event.inputs.image_url }}'"
+          pscale connect ${{ github.event.inputs.db_name }} ${{ github.event.inputs.db_branch }} --execute "python3 visualize-matrix-build-ps.py --max-x=800 --max-y=600 --job-x='${{matrix.x}}' --job-y='${{matrix.y}}' --max-job-x='${{github.event.inputs.x}}' --max-job-y='${{github.event.inputs.y}}' --duration='${{github.event.inputs.duration}}' --environment=barfoo --image-file='${{ github.event.inputs.image_url }}'"
         working-directory: ./images
