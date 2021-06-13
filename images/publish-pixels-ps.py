@@ -76,7 +76,9 @@ class StreamPixels(object):
             # redisClient.hset(environment,("line%d") % (x), values)
         
         connection.commit()
-        #time.sleep(sleepInterval/1000)
+        
+        # Redis could also write all data in one call but MySQL's text column would be too small to do this
+        #redisClient.hset(environment,"reset",values)
 
 # Main function
 if __name__ == "__main__":

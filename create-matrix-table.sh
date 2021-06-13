@@ -10,3 +10,12 @@ echo "alter table matrix add column job text; create index job on matrix (job(10
 pscale deploy-request create octodemo add-job-to-matrix-table
 pscale deploy-request diff octodemo 2
 pscale deploy-request deploy octodemo 2
+
+
+# Alternative DB table monalisa
+# create table matrix (environment varchar(10), job varchar(10), lines text);
+# create index job on matrix (job);
+# create index environment on matrix (environment);
+# exit
+
+
