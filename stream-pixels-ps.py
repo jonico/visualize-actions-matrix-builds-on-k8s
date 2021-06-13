@@ -70,7 +70,7 @@ class StreamPixels():
         ]
 
         sg.SetOptions(element_padding=(0, 0))
-        window = sg.Window('Stream-Pixel-GUI', layout, margins=(0,0), size=(maxX, maxY), finalize=True)
+        window = sg.Window('Stream-Pixel-PS', layout, margins=(0,0), size=(maxX, maxY), finalize=True)
         #window = sg.Window('Stream-Pixel-GUI').Layout(layout).Finalize()
         window.Maximize()
         fullScreen = True

@@ -47,6 +47,9 @@ class StreamPixels(object):
         connection = pymysql.connect(user=url.username,password=url.password, host=url.hostname,port=url.port)
         cursor = connection.cursor()
 
+        #redisClient = redis.Redis(host=self.args.redis_host, port=6379, db=0, password=os.environ.get('REDIS_PASSWORD'), decode_responses=True)
+        #p = redisClient.pipeline(transaction=False)
+
         rgb_im = image.convert('RGB')
         width, height = rgb_im.size
 
@@ -54,6 +57,8 @@ class StreamPixels(object):
         clear_environment=("delete from matrix where environment = %s")
         cursor.execute(clear_environment, environment)
         connection.commit()
+
+        # redisClient.delete(environment)
 
         add_pixels = ("INSERT INTO matrix "
                "(environment, job, lines ) "
@@ -66,13 +71,9 @@ class StreamPixels(object):
                 value=("%d,%d,%d,%d,%d")%(x+offsetX,y + offsetY,r,g,b)
                 values+=value
                 values+="\n"
-                # print("Setting key %s with value %s" % (key, value))
-                # p.set(key,value)
-            
+                
             cursor.execute(add_pixels, (environment, ("line%d") % (x), values))
-            #connection.commit()
-        # p.execute()
-        #redisClient.hset(environment,"reset",values)
+            # redisClient.hset(environment,("line%d") % (x), values)
         
         connection.commit()
         #time.sleep(sleepInterval/1000)

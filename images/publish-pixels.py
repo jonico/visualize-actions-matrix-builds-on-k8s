@@ -53,6 +53,7 @@ class StreamPixels(object):
 
         values = ""
         for x in range(maxX):
+            values=""
             for y in range(maxY):
 
                 r, g, b = rgb_im.getpixel((x%width, y%height))
@@ -61,8 +62,9 @@ class StreamPixels(object):
                 values+="\n"
                 # print("Setting key %s with value %s" % (key, value))
                 # p.set(key,value)
+            redisClient.hset(environment,("line%d") % (x), values)
         # p.execute()
-        redisClient.hset(environment,"reset",values)
+        #redisClient.hset(environment,"reset",values)
 
         #time.sleep(sleepInterval/1000)
 
