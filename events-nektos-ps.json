@@ -1,7 +1,7 @@
 {  
   "inputs": {
     "cluster": "gcp",
-    "environment": "foobar",
+    "environment": "octodemo",
     "image_url": "summer-finished.png",
     "reset_image_url" : "summer-start.png",
     "x": "16",

@@ -34,7 +34,7 @@ on:
       environment:
         description: 'environment'
         required: true
-        default: 'foobar'
+        default: 'octodemo'
       
 
 jobs:
