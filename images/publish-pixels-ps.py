@@ -4,9 +4,10 @@ import sys
 import argparse
 from PIL import Image
 import time
-import redis
+import pymysql.cursors
 import os
 from urllib.request import urlopen
+from urllib.parse import urlparse
 
 
 class StreamPixels(object):
@@ -16,9 +17,8 @@ class StreamPixels(object):
         self.parser.add_argument("--job-x", help="job x", default=0, type=int)
         self.parser.add_argument("--max-y", help="max y pixel", default=16, type=int)
         self.parser.add_argument("--job-y", help="job y", default=0, type=int)
-        self.parser.add_argument("--environment", help="redis environment", default="foobar", type=str)
+        self.parser.add_argument("--environment", help="environment", default="barfoo", type=str)
         self.parser.add_argument("--image-file", help="image file location", default="images/static_image.jpg", type=str)
-        self.parser.add_argument("--redis-host", help="Redis Host", default="redis-master.redis.svc.cluster.local", type=str)
         self.parser.add_argument("--sleep-interval", help="sleep interval in milliseconds", default="0", type=int)
         self.args = self.parser.parse_args()
 
@@ -41,32 +41,46 @@ class StreamPixels(object):
         if width != maxX and height != maxY:
             image.thumbnail((maxX, maxY), Image.ANTIALIAS)
 
-        redisClient = redis.Redis(host=self.args.redis_host, port=6379, db=0, password=os.environ.get('REDIS_PASSWORD'), decode_responses=True)
-        p = redisClient.pipeline(transaction=False)
+        url = urlparse(os.environ.get('DATABASE_URL'))
+        #print (url.username, url.password, url.hostname, url.port, url.path[1:])
 
+        connection = pymysql.connect(user=url.username,password=url.password, host=url.hostname,port=url.port)
+        cursor = connection.cursor()
+
+        #redisClient = redis.Redis(host=self.args.redis_host, port=6379, db=0, password=os.environ.get('REDIS_PASSWORD'), decode_responses=True)
+        #p = redisClient.pipeline(transaction=False)
 
         rgb_im = image.convert('RGB')
         width, height = rgb_im.size
 
         # clear screen
-        redisClient.delete(environment)
+        clear_environment=("delete from matrix where environment = %s")
+        cursor.execute(clear_environment, environment)
+        connection.commit()
 
-        values = ""
+        # redisClient.delete(environment)
+
+        add_pixels = ("INSERT INTO matrix "
+               "(environment, job, lines ) "
+               "VALUES (%s, %s, %s)")
+        
+        records_to_insert = []
         for x in range(maxX):
-            values=""
+            values = ""
             for y in range(maxY):
-
                 r, g, b = rgb_im.getpixel((x%width, y%height))
                 value=("%d,%d,%d,%d,%d")%(x+offsetX,y + offsetY,r,g,b)
                 values+=value
                 values+="\n"
-                # print("Setting key %s with value %s" % (key, value))
-                # p.set(key,value)
-            redisClient.hset(environment,("line%d") % (x), values)
-        # p.execute()
+            records_to_insert.append((environment, ("line%d") % (x), values))
+            if (x != 0 and x%2 == 0):
+                cursor.executemany(add_pixels, records_to_insert)
+                records_to_insert = []
+            # redisClient.hset(environment,("line%d") % (x), values)    
+        
+        connection.commit()
+        # Redis could also write all data in one call but MySQL's text column would be too small to do this
         #redisClient.hset(environment,"reset",values)
-
-        #time.sleep(sleepInterval/1000)
 
 # Main function
 if __name__ == "__main__":

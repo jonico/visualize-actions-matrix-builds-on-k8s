@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 import time
-import redis
+import pymysql.cursors
 import os
 import PySimpleGUI as sg
 import os
 from PIL import Image
 import io
 import argparse
+from urllib.parse import urlparse
+
+
 
 class StreamPixels():
     def __init__(self, *args, **kwargs):
@@ -15,9 +18,7 @@ class StreamPixels():
         self.parser.add_argument("--max-y", help="max y pixel", default=600, type=int)
         self.parser.add_argument("--environment", help="redis environment", default="foobar", type=str)
         self.parser.add_argument("--sleep-interval", help="sleep interval in milliseconds", default="1000", type=int)
-        self.parser.add_argument("--redis-port", help="Redis Port", default="6379", type=int)
         self.parser.add_argument("--image-file", help="image file location", default="images/matrix-reset.png", type=str)
-        self.parser.add_argument("--redis-host", help="Redis Host", default="redis-master.redis.svc.cluster.local", type=str)
         self.args = self.parser.parse_args()
 
     def run(self):
@@ -34,12 +35,20 @@ class StreamPixels():
 
         pixelCache = {}
 
-        redisClient = redis.Redis(host=self.args.redis_host, port=self.args.redis_port, db=0, password=os.environ.get('REDIS_PASSWORD'), decode_responses=True)
-        p = redisClient.pipeline(transaction=False)
+        print (os.environ.get('DATABASE_URL'))
 
+        url = urlparse(os.environ.get('DATABASE_URL'))
+        #print (url.username, url.password, url.hostname, url.port, url.path[1:])
 
-        # clear Redis and cache at the beginning
-        redisClient.delete(environment)
+        connection = pymysql.connect(user=url.username,password=url.password, host=url.hostname,port=url.port, database=url.path[1:])
+        cursor = connection.cursor()
+        cursor2 = connection.cursor()
+
+        # clear Vitess and cache at the beginning
+        clear_environment=("delete from matrix where environment = %s")
+        cursor.execute(clear_environment, environment)
+        connection.commit()
+
         for x in range(maxX):
             for y in range(maxY):
                 key="%s/%d/%d" % (environment,x,y)
@@ -61,7 +70,7 @@ class StreamPixels():
         ]
 
         sg.SetOptions(element_padding=(0, 0))
-        window = sg.Window('Stream-Pixel-Redis', layout, margins=(0,0), size=(maxX, maxY), finalize=True)
+        window = sg.Window('Stream-Pixel-PS', layout, margins=(0,0), size=(maxX, maxY), finalize=True)
         #window = sg.Window('Stream-Pixel-GUI').Layout(layout).Finalize()
         window.Maximize()
         fullScreen = True
@@ -86,7 +95,10 @@ class StreamPixels():
                     window.Maximize()
                     fullScreen = True
 
-            for job, lines in redisClient.hgetall(environment).items():
+            line_query = ("select job, lines from matrix where environment = %s")
+            cursor.execute(line_query, (environment))
+            #for job, lines in redisClient.hgetall(environment).items():
+            for (job, lines) in cursor:
                 for values in lines.split("\n"):
                     if not values:
                         continue
@@ -100,7 +112,11 @@ class StreamPixels():
 
                 # if job.startswith("reset"):
                 # delete everything on redis that has been read, like a message bus
-                redisClient.hdel(environment, job)
+                clear_environment = ("delete from matrix where environment = %s and job= %s")
+                cursor2.execute(clear_environment, (environment, job))
+                #redisClient.hdel(environment, job)
+
+            connection.commit()
 
             if (needScreenUpdate):
                 img = Image.new('RGB', (maxX, maxY))
