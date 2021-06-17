@@ -39,7 +39,7 @@ on:
 
 jobs:
   reset-matrix:
-    name: "Reset LEDs"
+    name: "Reset Matrix"
     runs-on: ${{ github.event.inputs.environment }}
     steps:
       - name: checkout
