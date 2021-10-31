@@ -13,6 +13,7 @@ fi
 ORG_NAME="planetscale-demo"
 BRANCH_NAME="remove-operation-column-and-index"
 
+. use-pscale-docker-image.sh
 . wait-for-branch-readiness.sh
 
 #pscale auth login
@@ -26,4 +27,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 echo "alter table pixel_matrix drop column operation; drop index environment_operation on pixel_matrix;" | pscale shell "$DB_NAME" "$BRANCH_NAME" --org "$ORG_NAME"
+if [ $? -ne 0 ]; then
+    echo "Schema change in $BRANCH_NAME could not be created"
+    exit 1
+fi
 pscale deploy-request create "$DB_NAME" "$BRANCH_NAME" --org "$ORG_NAME" 

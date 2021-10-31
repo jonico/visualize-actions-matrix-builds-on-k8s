@@ -14,6 +14,7 @@ fi
 
 ORG_NAME="planetscale-demo"
 
+. use-pscale-docker-image.sh
 . wait-for-deploy-request-merged.sh
 
 raw_output=`pscale deploy-request list "$DB_NAME" --org "$ORG_NAME" --format json`
