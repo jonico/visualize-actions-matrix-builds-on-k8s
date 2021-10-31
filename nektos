@@ -1,1 +1,0 @@
-$ act -v workflow_dispatch -P link=jonico/actions-runner:latest  -e event.json -W .github/workflows/visualize-matrix-build.yml -s REDIS_PASSWORD=$REDIS_PASSWORD
