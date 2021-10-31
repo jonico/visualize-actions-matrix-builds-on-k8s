@@ -1,4 +1,4 @@
-name: Visualize matrix build
+name: Visualize matrix build Nektos
 
 on:
   workflow_dispatch:
