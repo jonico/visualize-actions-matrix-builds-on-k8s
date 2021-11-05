@@ -43,16 +43,29 @@ on:
 
 jobs:
 
+  generate-matrix:
+    name: "Generate matrix job specs"
+    outputs:
+      x: ${{ steps.generate-matrix.outputs.x }}
+      y: ${{ steps.generate-matrix.outputs.y }}
+    runs-on: custom-runner
+    steps:
+      - name: generate-matrix
+        id: generate-matrix
+        run: |
+          echo "::set-output name=x::[`seq -s , ${{ github.event.inputs.x }}`]"
+          echo "::set-output name=y::[`seq -s , ${{ github.event.inputs.y }}`]"
+
   enter-matrix:
     name: "Render Matrix Cell"
     runs-on: custom-runner
+    needs: [generate-matrix]
 
     strategy:
       fail-fast: false
-      #max-parallel: 16
       matrix:
-        x: [1,2,3,4]
-        y: [1,2,3]
+        x: ${{ fromJson(needs.generate-matrix.outputs.x) }}
+        y: ${{ fromJson(needs.generate-matrix.outputs.y) }}
 
     steps:
       - name: checkout
