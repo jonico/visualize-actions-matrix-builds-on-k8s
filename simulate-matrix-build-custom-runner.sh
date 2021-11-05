@@ -17,6 +17,6 @@ act workflow_dispatch \
     -P custom-runner=ghcr.io/ghcr.io/jonico/actions-runner:ps   \
     -e test-parameters.json \
     -a ${GITHUB_USER:0:10} \
-    -W .github/workflows/matrix-build-custom-runner.yml  \
+    -W .github/workflows/matrix-build-custom-runner-nektos.yml  \
     -s DATABASE_URL=$DATABASE_URL \
     -b
