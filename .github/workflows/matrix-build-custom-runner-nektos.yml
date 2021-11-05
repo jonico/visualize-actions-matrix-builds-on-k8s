@@ -1,4 +1,4 @@
-name: Matrix Build Custom Runner
+name: Matrix Build Custom Runner Nektos
 
 on:
   workflow_dispatch:
