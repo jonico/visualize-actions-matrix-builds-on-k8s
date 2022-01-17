@@ -18,5 +18,5 @@ This repository contains various GitHub Action workflows to trigger Matrix build
 
 ... and [another movie](https://user-images.githubusercontent.com/1872314/109474179-8456ad00-7a74-11eb-9a77-033e5f70c66d.mp4) showing the LED matrix showing the output of the GitHub Actions runners in the  Raspberry Pi Kubernetes connected to it.
 
-
+... now featuring [PlanetScale IssueOps workflows](https://github.com/jonico/pscale-cli-helper-scripts)
 
